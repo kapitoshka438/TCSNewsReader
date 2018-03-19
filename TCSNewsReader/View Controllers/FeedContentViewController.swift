@@ -24,6 +24,10 @@ class FeedContentViewController: UIViewController, WKNavigationDelegate {
         
         set {
             _content = newValue
+            
+            if isViewLoaded {
+                loadContent()
+            }
         }
     }
     
@@ -33,16 +37,24 @@ class FeedContentViewController: UIViewController, WKNavigationDelegate {
     
     @IBOutlet weak var webView: WKWebView!
     
+    // MARK: - Private methods
+    
+    private func loadContent() {
+        if let content = content {
+            DispatchQueue.main.async { [unowned self] in
+                self.webView.loadHTMLString(content, baseURL: nil)
+            }
+        }
+    }
+    
     // MARK: - View lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let content = content {
-            webView.loadHTMLString(content, baseURL: nil)
-        }
-        
+
         webView.navigationDelegate = self
+        
+        loadContent()
     }
 
     override func didReceiveMemoryWarning() {
